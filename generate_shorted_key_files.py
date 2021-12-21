@@ -141,7 +141,7 @@ for key_gate in key_gates.keys():
     for i in range(0, 2):
         new_instance_dict = {}
         # xor case
-        if 'xor' in InstanceListDict[gate].module:
+        if 'xor' in InstanceListDict[key_gate].module:
             if i == 0:
                 # replace with buffer
                 for gateName in gateNodes.keys():
