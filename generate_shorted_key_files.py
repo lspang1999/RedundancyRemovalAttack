@@ -14,7 +14,14 @@ import pyverilog
 from pyverilog.vparser.parser import parse
 import pyverilog.vparser.ast as vast
 
-filename = r'C:\\Users\\lspan\\PycharmProjects\\lockingSchemes\\circuits\\c432_rll_8_ver2.v'
+parser = argparse.ArgumentParser("Generate all combinations of single key guessing")
+parser.add_argument("filename")
+parser.add_argument("output_path")
+parser.add_argument("top_level")
+args = parser.parse_args()
+
+filename = args.filename
+# filename = r'C:\\Users\\lspan\\PycharmProjects\\lockingSchemes\\circuits\\c432_rll_8_ver2.v'
 filelist = [filename]
 ast, directives = parse(filelist)
 
@@ -237,9 +244,8 @@ for key_gate in key_gates.keys():
         rslt = codegen.visit(newAST)
         # newAST.show()
         # print(node.name)
-        file_name = key_gate + '_' + str(i)
+        file_name = args.output_path + args.top_level + "_" + key_gate + '_' + str(i)
         with open(
-                r'C:\\Users\\lspan\\PycharmProjects\\lockingSchemes\\circuits\\c432_rll_8_ver2\\c432_rll_8' +
                 file_name + '.v',
                 'w') as fo:
             fo.write(rslt)
