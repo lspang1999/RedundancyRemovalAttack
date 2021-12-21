@@ -140,99 +140,195 @@ print(key_gates)
 for key_gate in key_gates.keys():
     for i in range(0, 2):
         new_instance_dict = {}
-        if i == 0:
-            # replace with buffer
-            for gateName in gateNodes.keys():
-                if gateName is key_gate:
-                    oldSelGatePorts = gateNodes[gateName]
-                    oldSelGate = InstanceListDict[gateName]
-                    oldSelGateOutput = oldSelGatePorts[0]
-                    newInst = oldSelGate # instantiate newInst to something to make Python compile
-                    # make buffer instance with non key input as input
-                    if " " not in oldSelGateOutput:
-                        # output is a wire case
-                        # determine which output is not the key input (also relies on naming conventions)
-                        wireName = ""
-                        if "keyInput" in oldSelGatePorts[1].lower():
-                            wireName = oldSelGatePorts[2]
-                        else:
-                            wireName = oldSelGatePorts[1]
-                        newInst = vast.Instance("BUF", gateName,
-                                                [vast.PortArg(None, vast.Identifier(oldSelGateOutput)),
-                                                 vast.PortArg(None, vast.Identifier(wireName))], ())
+        # xor case
+        if 'xor' in InstanceListDict[gate].module:
+            if i == 0:
+                # replace with buffer
+                for gateName in gateNodes.keys():
+                    if gateName is key_gate:
+                        oldSelGatePorts = gateNodes[gateName]
+                        oldSelGate = InstanceListDict[gateName]
+                        oldSelGateOutput = oldSelGatePorts[0]
+                        newInst = oldSelGate # instantiate newInst to something to make Python compile
+                        # make buffer instance with non key input as input
+                        if " " not in oldSelGateOutput:
+                            # output is a wire case
+                            # determine which output is not the key input (also relies on naming conventions)
+                            wireName = ""
+                            if "keyInput" in oldSelGatePorts[1].lower():
+                                wireName = oldSelGatePorts[2]
+                            else:
+                                wireName = oldSelGatePorts[1]
+                            newInst = vast.Instance("BUF", gateName,
+                                                    [vast.PortArg(None, vast.Identifier(oldSelGateOutput)),
+                                                     vast.PortArg(None, vast.Identifier(wireName))], ())
 
+                            # remove key input from ports and declarations
+                            # ports.remove(wireName)
+                            # declarations.remove(wireName)
+
+                        else:
+                            # output is part of a bus case
+                            outputlist = oldSelGateOutput.split()
+                            intVal = outputlist[1]
+                            outputName = outputlist[0]
+                            # determine which output is not the key input (also relies on naming conventions)
+                            wireName = ""
+                            if "keyInput" in oldSelGatePorts[1].lower():
+                                wireName = oldSelGatePorts[2]
+                            else:
+                                wireName = oldSelGatePorts[1]
+                            newInst = vast.Instance("BUF", gateName, [vast.PortArg(None, vast.Pointer(
+                            vast.Identifier(outputName), vast.IntConst(int(intVal)))),
+                                                                   vast.PortArg(None,
+                                                                                vast.Identifier(wireName))], ())
+                        new_instance_dict[gateName] = vast.InstanceList(newInst.module, (), [newInst])
                         # remove key input from ports and declarations
                         # ports.remove(wireName)
                         # declarations.remove(wireName)
-
                     else:
-                        # output is part of a bus case
-                        outputlist = oldSelGateOutput.split()
-                        intVal = outputlist[1]
-                        outputName = outputlist[0]
-                        # determine which output is not the key input (also relies on naming conventions)
-                        wireName = ""
-                        if "keyInput" in oldSelGatePorts[1].lower():
-                            wireName = oldSelGatePorts[2]
+                        # add gate back to AST
+                        new_instance_dict[gateName] = InstanceListDict[gateName]
+            else:
+                # add inverter instead
+                for gateName in gateNodes.keys():
+                    if gateName is key_gate:
+                        oldSelGatePorts = gateNodes[gateName]
+                        oldSelGate = InstanceListDict[gateName]
+                        oldSelGateOutput = oldSelGatePorts[0]
+                        newInst = oldSelGate # instantiate newInst to something to make Python compile
+                        # make buffer instance with non key input as input
+                        if " " not in oldSelGateOutput:
+                            # output is a wire case
+                            # determine which output is not the key input (also relies on naming conventions)
+                            wireName = ""
+                            if "keyInput" in oldSelGatePorts[1].lower():
+                                wireName = oldSelGatePorts[2]
+                            else:
+                                wireName = oldSelGatePorts[1]
+                            newInst = vast.Instance("INV", gateName,
+                                                    [vast.PortArg(None, vast.Identifier(oldSelGateOutput)),
+                                                     vast.PortArg(None, vast.Identifier(wireName))], ())
+                            # remove key input from ports and declarations
+                            # ports.remove(wireName)
+                            # declarations.remove(wireName)
+
                         else:
-                            wireName = oldSelGatePorts[1]
-                        newInst = vast.Instance("BUF", gateName, [vast.PortArg(None, vast.Pointer(
-                        vast.Identifier(outputName), vast.IntConst(int(intVal)))),
-                                                               vast.PortArg(None,
-                                                                            vast.Identifier(wireName))], ())
-                    new_instance_dict[gateName] = vast.InstanceList(newInst.module, (), [newInst])
-                    # remove key input from ports and declarations
-                    # ports.remove(wireName)
-                    # declarations.remove(wireName)
-                else:
-                    # add gate back to AST
-                    new_instance_dict[gateName] = InstanceListDict[gateName]
+                            # output is part of a bus case
+                            outputlist = oldSelGateOutput.split()
+                            intVal = outputlist[1]
+                            outputName = outputlist[0]
+                            # determine which output is not the key input (also relies on naming conventions)
+                            wireName = ""
+                            if "keyInput" in oldSelGatePorts[1].lower():
+                                wireName = oldSelGatePorts[2]
+                            else:
+                                wireName = oldSelGatePorts[1]
+                            newInst = vast.Instance("INV", gateName, [vast.PortArg(None, vast.Pointer(
+                            vast.Identifier(outputName), vast.IntConst(int(intVal)))),
+                                                                   vast.PortArg(None,
+                                                                                vast.Identifier(wireName))], ())
+                        new_instance_dict[gateName] = vast.InstanceList(newInst.module, (), [newInst])
+                        # remove key input from ports and declarations
+                        # ports.remove(wireName)
+                        # declarations.remove(wireName)
+                    else:
+                        # add gate back to AST
+                        new_instance_dict[gateName] = InstanceListDict[gateName]
         else:
-            # add inverter instead
-            for gateName in gateNodes.keys():
-                if gateName is key_gate:
-                    oldSelGatePorts = gateNodes[gateName]
-                    oldSelGate = InstanceListDict[gateName]
-                    oldSelGateOutput = oldSelGatePorts[0]
-                    newInst = oldSelGate # instantiate newInst to something to make Python compile
-                    # make buffer instance with non key input as input
-                    if " " not in oldSelGateOutput:
-                        # output is a wire case
-                        # determine which output is not the key input (also relies on naming conventions)
-                        wireName = ""
-                        if "keyInput" in oldSelGatePorts[1].lower():
-                            wireName = oldSelGatePorts[2]
+            if i == 0:
+                # add inverter
+                for gateName in gateNodes.keys():
+                    if gateName is key_gate:
+                        oldSelGatePorts = gateNodes[gateName]
+                        oldSelGate = InstanceListDict[gateName]
+                        oldSelGateOutput = oldSelGatePorts[0]
+                        newInst = oldSelGate  # instantiate newInst to something to make Python compile
+                        # make buffer instance with non key input as input
+                        if " " not in oldSelGateOutput:
+                            # output is a wire case
+                            # determine which output is not the key input (also relies on naming conventions)
+                            wireName = ""
+                            if "keyInput" in oldSelGatePorts[1].lower():
+                                wireName = oldSelGatePorts[2]
+                            else:
+                                wireName = oldSelGatePorts[1]
+                            newInst = vast.Instance("INV", gateName,
+                                                    [vast.PortArg(None, vast.Identifier(oldSelGateOutput)),
+                                                     vast.PortArg(None, vast.Identifier(wireName))], ())
+                            # remove key input from ports and declarations
+                            # ports.remove(wireName)
+                            # declarations.remove(wireName)
+
                         else:
-                            wireName = oldSelGatePorts[1]
-                        newInst = vast.Instance("INV", gateName,
-                                                [vast.PortArg(None, vast.Identifier(oldSelGateOutput)),
-                                                 vast.PortArg(None, vast.Identifier(wireName))], ())
+                            # output is part of a bus case
+                            outputlist = oldSelGateOutput.split()
+                            intVal = outputlist[1]
+                            outputName = outputlist[0]
+                            # determine which output is not the key input (also relies on naming conventions)
+                            wireName = ""
+                            if "keyInput" in oldSelGatePorts[1].lower():
+                                wireName = oldSelGatePorts[2]
+                            else:
+                                wireName = oldSelGatePorts[1]
+                            newInst = vast.Instance("INV", gateName, [vast.PortArg(None, vast.Pointer(
+                                vast.Identifier(outputName), vast.IntConst(int(intVal)))),
+                                                                      vast.PortArg(None,
+                                                                                   vast.Identifier(wireName))], ())
+                        new_instance_dict[gateName] = vast.InstanceList(newInst.module, (), [newInst])
                         # remove key input from ports and declarations
                         # ports.remove(wireName)
                         # declarations.remove(wireName)
-
                     else:
-                        # output is part of a bus case
-                        outputlist = oldSelGateOutput.split()
-                        intVal = outputlist[1]
-                        outputName = outputlist[0]
-                        # determine which output is not the key input (also relies on naming conventions)
-                        wireName = ""
-                        if "keyInput" in oldSelGatePorts[1].lower():
-                            wireName = oldSelGatePorts[2]
+                        # add gate back to AST
+                        new_instance_dict[gateName] = InstanceListDict[gateName]
+            else:
+                # add buffer
+                for gateName in gateNodes.keys():
+                    if gateName is key_gate:
+                        oldSelGatePorts = gateNodes[gateName]
+                        oldSelGate = InstanceListDict[gateName]
+                        oldSelGateOutput = oldSelGatePorts[0]
+                        newInst = oldSelGate  # instantiate newInst to something to make Python compile
+                        # make buffer instance with non key input as input
+                        if " " not in oldSelGateOutput:
+                            # output is a wire case
+                            # determine which output is not the key input (also relies on naming conventions)
+                            wireName = ""
+                            if "keyInput" in oldSelGatePorts[1].lower():
+                                wireName = oldSelGatePorts[2]
+                            else:
+                                wireName = oldSelGatePorts[1]
+                            newInst = vast.Instance("BUF", gateName,
+                                                    [vast.PortArg(None, vast.Identifier(oldSelGateOutput)),
+                                                     vast.PortArg(None, vast.Identifier(wireName))], ())
+
+                            # remove key input from ports and declarations
+                            # ports.remove(wireName)
+                            # declarations.remove(wireName)
+
                         else:
-                            wireName = oldSelGatePorts[1]
-                        newInst = vast.Instance("INV", gateName, [vast.PortArg(None, vast.Pointer(
-                        vast.Identifier(outputName), vast.IntConst(int(intVal)))),
-                                                               vast.PortArg(None,
-                                                                            vast.Identifier(wireName))], ())
-                    new_instance_dict[gateName] = vast.InstanceList(newInst.module, (), [newInst])
-                    # remove key input from ports and declarations
-                    # ports.remove(wireName)
-                    # declarations.remove(wireName)
-                else:
-                    # add gate back to AST
-                    new_instance_dict[gateName] = InstanceListDict[gateName]
+                            # output is part of a bus case
+                            outputlist = oldSelGateOutput.split()
+                            intVal = outputlist[1]
+                            outputName = outputlist[0]
+                            # determine which output is not the key input (also relies on naming conventions)
+                            wireName = ""
+                            if "keyInput" in oldSelGatePorts[1].lower():
+                                wireName = oldSelGatePorts[2]
+                            else:
+                                wireName = oldSelGatePorts[1]
+                            newInst = vast.Instance("BUF", gateName, [vast.PortArg(None, vast.Pointer(
+                                vast.Identifier(outputName), vast.IntConst(int(intVal)))),
+                                                                      vast.PortArg(None,
+                                                                                   vast.Identifier(wireName))], ())
+                        new_instance_dict[gateName] = vast.InstanceList(newInst.module, (), [newInst])
+                        # remove key input from ports and declarations
+                        # ports.remove(wireName)
+                        # declarations.remove(wireName)
+                    else:
+                        # add gate back to AST
+                        new_instance_dict[gateName] = InstanceListDict[gateName]
         # create new file
         print(ports)
         print(declarations)
