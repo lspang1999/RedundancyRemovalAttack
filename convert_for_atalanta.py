@@ -16,7 +16,7 @@ floating_input = "keyInput" + input_number
 # print(floating_input)
 output_file.write(module)
 for line in input_file:
-	if floating_input not in line:
+	if floating_input + ')' not in line:
 		output_file.write(line)
 input_file.close()
 output_file.close()
