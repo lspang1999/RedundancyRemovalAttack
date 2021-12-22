@@ -8,31 +8,38 @@ args = parser.parse_args()
 
 # ASSUMPTION: test files end in two digits, where the first digit is the keyGate number and the second digit is the value at test
 
-key_file_start = args.first_key_file[0:len(args.first_key_file)-10]
+key_file_start = args.first_key_file[0:len(args.first_key_file)-6]
 print(key_file_start)
 
 for i in range(0, int(args.num_keys)):
 	faults_0 = 0
 	faults_1 = 0
 	try:
-		fault_0_file = open(key_file_start + str(i) + str(0) + ".ufaults", "r");
+		fault_0_file = open(key_file_start + str(i) + str(0) + ".log", "r");
 	except:
 		faults_0 = 0
 	else:
 		for line in fault_0_file:
-			faults_0 += 1
+			# redundant vs aborted fault
+			if 'Number of identified redundant faults' in line:
+				split_line = line.split(": ")
+				# print(split_line)
+				faults_0 = int(split_line[1][:-1])
 		fault_0_file.close()
 	try:
-		fault_1_file = open(key_file_start + str(i) + str(1) + ".ufaults", "r");
+		fault_1_file = open(key_file_start + str(i) + str(1) + ".log", "r");
 	except:
 		faults_1 = 0
 	else:
 		for line in fault_1_file:
-			faults_1 += 1
+			if 'Number of identified redundant faults' in line:
+				split_line = line.split(": ")
+				# print(split_line)
+				faults_1 = int(split_line[1][:-1])
 		fault_1_file.close()
 
-	print("keyGate" + str(i) + " faults_0 = " + str(faults_0))
-	print("keyGate" + str(i) + " faults_1 = " + str(faults_1))
+	# print("keyGate" + str(i) + " faults_0 = " + str(faults_0))
+	# print("keyGate" + str(i) + " faults_1 = " + str(faults_1))
 	# Compare number of redundant faults
 	if faults_0 > int(args.min_redundant_faults) and faults_0 > faults_1:
 		print("keyGate" + str(i) + " = 1")
