@@ -7,10 +7,12 @@ args = parser.parse_args()
 input_file = open(args.input_file_name, "r");
 output_file = open(args.output_file_name, "w");
 # grab first line to determine floating input to remove
-# ASSUMPTION: key gate number is 2nd to last character of module
+# ASSUMPTION: file ends with "keyGate### with last number being digit under test
 module = input_file.readline()
+split_module = module.split("keyGate")
+input_number = split_module[1][:-2]
 # print(module)
-floating_input = "keyInput" + module[len(module) - 3]
+floating_input = "keyInput" + input_number
 # print(floating_input)
 output_file.write(module)
 for line in input_file:
