@@ -1,4 +1,4 @@
-# MastersWork
+# RedundancyRemovalAttack
 Python files for redundancy removal attack
 
 PREREQS: Atalanta, PyVerilog
