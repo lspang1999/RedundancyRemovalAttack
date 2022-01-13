@@ -5,7 +5,7 @@ PREREQS: Atalanta, PyVerilog
 
 TO RUN:'
 Run redundancy_removal_attack_main.py from a terminal. Include the following options. All are required.
-  - locked_circuit: The file name of the locked circuit to run the attack on. In current version, circuit must be synthesized to generic gates.
+  - locked_circuit: The file name of the locked circuit to run the attack on. In current version, circuit must be synthesized to generic gates. Key Gates must be labeled as KeyGate## and key inputs must be labeled as KeyInput##
   - output_path: Output directory to place genereated test copies of circuit in. INCLUDE BACKSLASH AT THE END OF PATH
   - top_level_module: Top level module name of locked circuit
   - num_keys: The number of keys in locked design
