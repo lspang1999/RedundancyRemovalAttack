@@ -4,12 +4,15 @@ parser = argparse.ArgumentParser("Redundancy Attack Key Guessing")
 parser.add_argument("min_redundant_faults")
 parser.add_argument("num_keys")
 parser.add_argument("first_key_file")
+parser.add_argument("key_log_file")
 args = parser.parse_args()
 
 # ASSUMPTION: test files end in two digits, where the first digit is the keyGate number and the second digit is the value at test
 
 key_file_start = args.first_key_file[0:len(args.first_key_file)-6]
 print(key_file_start)
+
+key_log_file = open(args.key_log_file, 'w')
 
 for i in range(0, int(args.num_keys)):
 	faults_0 = 0
@@ -42,13 +45,13 @@ for i in range(0, int(args.num_keys)):
 	# print("keyGate" + str(i) + " faults_1 = " + str(faults_1))
 	# Compare number of redundant faults
 	if faults_0 > int(args.min_redundant_faults) and faults_0 > faults_1:
-		print("keyGate" + str(i) + " = 1")
+		# print("keyGate" + str(i) + " = 1")
+		key_log_file.write("keyGate" + str(i) + " = 1\n")
 	if faults_1 > int(args.min_redundant_faults) and faults_1 > faults_0:
-		print("keyGate" + str(i) + " = 0")
+		# print("keyGate" + str(i) + " = 0")
+		key_log_file.write("keyGate" + str(i) + " = 0\n")
 
-
-# TODO: Add solved keys into unsolved keys bench files
-# TODO: Loop solving until pass does not result in more solved keys
+key_log_file.close()
 	
 		
 	

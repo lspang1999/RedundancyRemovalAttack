@@ -129,7 +129,7 @@ key_gates = {}
 
 # Loop through all gates and identify key gates
 for gate in gateNodes:
-    if "key" in gate.lower():
+    if "keyGate" in gate:
         key_gates[gate] = gateNodes[gate]
 
 print(key_gates)
@@ -155,7 +155,7 @@ for key_gate in key_gates.keys():
                             # output is a wire case
                             # determine which output is not the key input (also relies on naming conventions)
                             wireName = ""
-                            if "keyInput" in oldSelGatePorts[1].lower():
+                            if "keyInput" in oldSelGatePorts[1]:
                                 wireName = oldSelGatePorts[2]
                             else:
                                 wireName = oldSelGatePorts[1]
@@ -174,10 +174,10 @@ for key_gate in key_gates.keys():
                             outputName = outputlist[0]
                             # determine which output is not the key input (also relies on naming conventions)
                             wireName = ""
-                            if "keyInput" in oldSelGatePorts[1].lower():
+                            if "keyInput" in oldSelGatePorts[1]:
                                 wireName = oldSelGatePorts[2]
                             else:
-                                wireName = oldSelGatePorts[1]
+                                wireName = oldSelGatePorts[1]  
                             newInst = vast.Instance("BUF", gateName, [vast.PortArg(None, vast.Pointer(
                             vast.Identifier(outputName), vast.IntConst(int(intVal)))),
                                                                    vast.PortArg(None,
@@ -202,7 +202,7 @@ for key_gate in key_gates.keys():
                             # output is a wire case
                             # determine which output is not the key input (also relies on naming conventions)
                             wireName = ""
-                            if "keyInput" in oldSelGatePorts[1].lower():
+                            if "keyInput" in oldSelGatePorts[1]:
                                 wireName = oldSelGatePorts[2]
                             else:
                                 wireName = oldSelGatePorts[1]
@@ -220,7 +220,7 @@ for key_gate in key_gates.keys():
                             outputName = outputlist[0]
                             # determine which output is not the key input (also relies on naming conventions)
                             wireName = ""
-                            if "keyInput" in oldSelGatePorts[1].lower():
+                            if "keyInput" in oldSelGatePorts[1]:
                                 wireName = oldSelGatePorts[2]
                             else:
                                 wireName = oldSelGatePorts[1]
@@ -249,7 +249,7 @@ for key_gate in key_gates.keys():
                             # output is a wire case
                             # determine which output is not the key input (also relies on naming conventions)
                             wireName = ""
-                            if "keyInput" in oldSelGatePorts[1].lower():
+                            if "keyInput" in oldSelGatePorts[1]:
                                 wireName = oldSelGatePorts[2]
                             else:
                                 wireName = oldSelGatePorts[1]
@@ -267,7 +267,7 @@ for key_gate in key_gates.keys():
                             outputName = outputlist[0]
                             # determine which output is not the key input (also relies on naming conventions)
                             wireName = ""
-                            if "keyInput" in oldSelGatePorts[1].lower():
+                            if "keyInput" in oldSelGatePorts[1]:
                                 wireName = oldSelGatePorts[2]
                             else:
                                 wireName = oldSelGatePorts[1]
@@ -295,7 +295,7 @@ for key_gate in key_gates.keys():
                             # output is a wire case
                             # determine which output is not the key input (also relies on naming conventions)
                             wireName = ""
-                            if "keyInput" in oldSelGatePorts[1].lower():
+                            if "keyInput" in oldSelGatePorts[1]:
                                 wireName = oldSelGatePorts[2]
                             else:
                                 wireName = oldSelGatePorts[1]
@@ -314,7 +314,7 @@ for key_gate in key_gates.keys():
                             outputName = outputlist[0]
                             # determine which output is not the key input (also relies on naming conventions)
                             wireName = ""
-                            if "keyInput" in oldSelGatePorts[1].lower():
+                            if "keyInput" in oldSelGatePorts[1]:
                                 wireName = oldSelGatePorts[2]
                             else:
                                 wireName = oldSelGatePorts[1]

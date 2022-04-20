@@ -12,6 +12,7 @@ parser.add_argument("output_path")
 parser.add_argument("top_level_module")
 parser.add_argument("num_keys")
 parser.add_argument("min_faults")
+parser.add_argument("key_log_file")
 args = parser.parse_args()
 
 subprocess.run(['python3','generate_shorted_key_files.py',args.locked_circuit, args.output_path, args.top_level_module])
@@ -40,6 +41,6 @@ for i in range(0, int(args.num_keys)):
 # run key guessing
 
 first_key_file = args.top_level_module + "_" + "new_keyGate00.log"
-subprocess.call(['python3', 'redundancy_key_guessing.py', args.min_faults, args.num_keys, first_key_file])
+subprocess.call(['python3', 'redundancy_key_guessing.py', args.min_faults, args.num_keys, first_key_file, args.key_log_file])
 
 

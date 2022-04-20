@@ -144,6 +144,7 @@ def main():
     #random gate selection
     def random_selection(nodes, keys):
         numKeys = len(keys)
+        print(numKeys)
         counter = 0
         keynodes = {}
         while counter < numKeys:
@@ -566,9 +567,10 @@ def main():
     newAST = vast.ModuleDef(ModuleName, ModuleParamList, portList, [vast.Decl(declarations), *InstanceListDict.values()])
     codegen = ASTCodeGenerator()
     rslt = codegen.visit(newAST)
-    newAST.show()
+    # newAST.show()
     #print(rslt)
-    with open(r'circuits\c432_rll_8_ver2.v', 'w') as fo:
+    #print(keyList)
+    with open(args.locked_filename, 'w') as fo:
         fo.write(rslt)
     #Print the new verilog!
 
